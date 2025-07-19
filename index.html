@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Malla Curricular Contador UNS</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fdf6f0;
+      color: #333;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #6b4c3b;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    .anio {
+      background: #f3e5f5;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .cuatri {
+      margin-bottom: 15px;
+    }
+    .materia {
+      padding: 6px;
+      margin: 4px 0;
+      background: #e1f5fe;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+    }
+    .materia.aprobada {
+      background: #c8e6c9;
+      text-decoration: line-through;
+    }
+    .materia.bloqueada {
+      background: #ffe0b2;
+      color: #999;
+      cursor: not-allowed;
+    }
+    .tooltip {
+      visibility: hidden;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      width: max-content;
+    }
+    .materia:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+<h1>Malla Curricular Contador Público - UNS</h1>
+<div class="grid" id="malla"></div>
+<script>
+  const materias = [
+    { id: '8116', nombre: 'MATEMATICA I C', anio: 1, cuatri: 1 },
+    { id: '1660', nombre: 'INTRODUCCION A LA ADMINISTRACION', anio: 1, cuatri: 1 },
+    { id: '4757', nombre: 'INTRODUCCION AL ESTUDIO DE LAS CIENCIAS SOCIALES', anio: 1, cuatri: 1 },
+    { id: '1613', nombre: 'CONTABILIDAD BASICA', anio: 1, cuatri: 2 },
+    { id: '9065', nombre: 'INTRODUCCION AL DERECHO C.A.', anio: 1, cuatri: 2 },
+    { id: '8117', nombre: 'MATEMATICA II C', anio: 1, cuatri: 2, req: { cursar: ['8116'], rendir: ['8116'] } },
+    { id: '1673', nombre: 'ANALISIS FINANCIERO', anio: 2, cuatri: 1, req: { cursar: ['8116', '8117'], rendir: ['8116', '8117'] } },
+    { id: '9074', nombre: 'DERECHO EMPRESARIO C', anio: 2, cuatri: 1, req: { cursar: ['9065'], rendir: ['9065'] } },
+    { id: '1711', nombre: 'LABORATORIO DE TECNOLOGIA DE LA INFORMACION EN LAS ORGANIZACIONES', anio: 2, cuatri: 1, req: { cursar: ['1660'], rendir: ['1660'] } },
+    { id: '2360', nombre: 'SISTEMAS ECONOMICOS', anio: 2, cuatri: 1, req: { cursar: ['8116'], rendir: ['8116'] } },
+    { id: '1576', nombre: 'CONTABILIDAD I C.P.', anio: 2, cuatri: 2, req: { cursar: ['1613'], rendir: ['1613'] } },
+    { id: '8105', nombre: 'ESTADISTICA CA', anio: 2, cuatri: 2, req: { cursar: ['8116', '8117'], rendir: ['8116', '8117'] } },
+    { id: '2253', nombre: 'MICROECONOMIA', anio: 2, cuatri: 2, req: { cursar: ['8117', '2360'], rendir: ['8117', '2360', '4757'] } },
+  ];
+
+  const aprobadas = JSON.parse(localStorage.getItem('aprobadas') || '[]');
+
+  const grid = document.getElementById('malla');
+
+  function renderMalla() {
+    grid.innerHTML = '';
+    for (let a = 1; a <= 5; a++) {
+      const col = document.createElement('div');
+      col.className = 'anio';
+      col.innerHTML = `<h3>${a}° Año</h3>`;
+
+      for (let c = 1; c <= 2; c++) {
+        const cuatri = document.createElement('div');
+        cuatri.className = 'cuatri';
+        cuatri.innerHTML = `<h4>${c === 1 ? '1er' : '2do'} Cuatrimestre</h4>`;
+
+        materias.filter(m => m.anio === a && m.cuatri === c).forEach(m => {
+          const div = document.createElement('div');
+          div.className = 'materia';
+          div.textContent = m.nombre;
+          div.dataset.id = m.id;
+
+          const tooltip = document.createElement('span');
+          tooltip.className = 'tooltip';
+          div.appendChild(tooltip);
+
+          const requisitos = m.req || {};
+          const faltan = [];
+          ['cursar', 'rendir'].forEach(tipo => {
+            if (requisitos[tipo]) {
+              requisitos[tipo].forEach(id => {
+                if (!aprobadas.includes(id)) {
+                  faltan.push(`${tipo} ${id}`);
+                }
+              });
+            }
+          });
+
+          if (aprobadas.includes(m.id)) {
+            div.classList.add('aprobada');
+          } else if (faltan.length > 0) {
+            div.classList.add('bloqueada');
+            tooltip.textContent = 'Requiere: ' + faltan.join(', ');
+          }
+
+          div.addEventListener('click', () => {
+            if (div.classList.contains('bloqueada')) return;
+            const idx = aprobadas.indexOf(m.id);
+            if (idx > -1) {
+              aprobadas.splice(idx, 1);
+            } else {
+              aprobadas.push(m.id);
+            }
+            localStorage.setItem('aprobadas', JSON.stringify(aprobadas));
+            renderMalla();
+          });
+
+          cuatri.appendChild(div);
+        });
+
+        col.appendChild(cuatri);
+      }
+
+      grid.appendChild(col);
+    }
+  }
+
+  renderMalla();
+</script>
+</body>
+</html>
