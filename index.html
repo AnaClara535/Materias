@@ -71,19 +71,44 @@
 <div class="grid" id="malla"></div>
 <script>
   const materias = [
+    // 1er Año
     { id: '8116', nombre: 'MATEMATICA I C', anio: 1, cuatri: 1 },
     { id: '1660', nombre: 'INTRODUCCION A LA ADMINISTRACION', anio: 1, cuatri: 1 },
     { id: '4757', nombre: 'INTRODUCCION AL ESTUDIO DE LAS CIENCIAS SOCIALES', anio: 1, cuatri: 1 },
     { id: '1613', nombre: 'CONTABILIDAD BASICA', anio: 1, cuatri: 2 },
     { id: '9065', nombre: 'INTRODUCCION AL DERECHO C.A.', anio: 1, cuatri: 2 },
     { id: '8117', nombre: 'MATEMATICA II C', anio: 1, cuatri: 2, req: { cursar: ['8116'], rendir: ['8116'] } },
+
+    // 2do Año
     { id: '1673', nombre: 'ANALISIS FINANCIERO', anio: 2, cuatri: 1, req: { cursar: ['8116', '8117'], rendir: ['8116', '8117'] } },
     { id: '9074', nombre: 'DERECHO EMPRESARIO C', anio: 2, cuatri: 1, req: { cursar: ['9065'], rendir: ['9065'] } },
-    { id: '1711', nombre: 'LABORATORIO DE TECNOLOGIA DE LA INFORMACION EN LAS ORGANIZACIONES', anio: 2, cuatri: 1, req: { cursar: ['1660'], rendir: ['1660'] } },
+    { id: '1711', nombre: 'LAB. DE TECNOLOGIA EN ORGANIZACIONES', anio: 2, cuatri: 1, req: { cursar: ['1660'], rendir: ['1660'] } },
     { id: '2360', nombre: 'SISTEMAS ECONOMICOS', anio: 2, cuatri: 1, req: { cursar: ['8116'], rendir: ['8116'] } },
     { id: '1576', nombre: 'CONTABILIDAD I C.P.', anio: 2, cuatri: 2, req: { cursar: ['1613'], rendir: ['1613'] } },
     { id: '8105', nombre: 'ESTADISTICA CA', anio: 2, cuatri: 2, req: { cursar: ['8116', '8117'], rendir: ['8116', '8117'] } },
     { id: '2253', nombre: 'MICROECONOMIA', anio: 2, cuatri: 2, req: { cursar: ['8117', '2360'], rendir: ['8117', '2360', '4757'] } },
+
+    // 3er Año
+    { id: '1577', nombre: 'CONTABILIDAD II C.P.', anio: 3, cuatri: 1, req: { cursar: ['1576'], rendir: ['1576'] } },
+    { id: '2103', nombre: 'MACROECONOMIA', anio: 3, cuatri: 1, req: { cursar: ['2253'], rendir: ['2253'] } },
+    { id: '2400', nombre: 'DERECHO LABORAL Y SEGURIDAD SOCIAL', anio: 3, cuatri: 1, req: { cursar: ['9074'], rendir: ['9074'] } },
+    { id: '8015', nombre: 'INFORMATICA APLICADA A LA GESTION C.P.', anio: 3, cuatri: 2 },
+    { id: '1735', nombre: 'COSTOS', anio: 3, cuatri: 2, req: { cursar: ['1576'], rendir: ['1576'] } },
+    { id: '1729', nombre: 'FINANZAS CORPORATIVAS', anio: 3, cuatri: 2, req: { cursar: ['1673'], rendir: ['1673'] } },
+
+    // 4to Año
+    { id: '1578', nombre: 'CONTABILIDAD III C.P.', anio: 4, cuatri: 1, req: { cursar: ['1577'], rendir: ['1577'] } },
+    { id: '9033', nombre: 'DERECHO TRIBUTARIO', anio: 4, cuatri: 1, req: { cursar: ['9074'], rendir: ['9074'] } },
+    { id: '1684', nombre: 'AUDITORIA I', anio: 4, cuatri: 1, req: { cursar: ['1577'], rendir: ['1577'] } },
+    { id: '9025', nombre: 'REGIMEN TRIBUTARIO I', anio: 4, cuatri: 2, req: { cursar: ['9033'], rendir: ['9033'] } },
+    { id: '9091', nombre: 'ETICA Y DEONTOLOGIA PROFESIONAL', anio: 4, cuatri: 2 },
+    { id: '1605', nombre: 'TEORIA DE LAS ORGANIZACIONES', anio: 4, cuatri: 2, req: { cursar: ['1660'], rendir: ['1660'] } },
+
+    // 5to Año
+    { id: '1691', nombre: 'AUDITORIA II', anio: 5, cuatri: 1, req: { cursar: ['1684'], rendir: ['1684'] } },
+    { id: '9034', nombre: 'REGIMEN TRIBUTARIO II', anio: 5, cuatri: 1, req: { cursar: ['9025'], rendir: ['9025'] } },
+    { id: '1736', nombre: 'SEMINARIO DE ACTUALIZACION CONTABLE', anio: 5, cuatri: 1, req: { cursar: ['1578'], rendir: ['1578'] } },
+    { id: '9999', nombre: 'TRABAJO FINAL INTEGRADOR', anio: 5, cuatri: 2, req: { cursar: ['1578', '1691', '9034'], rendir: ['1578', '1691', '9034'] } }
   ];
 
   const aprobadas = JSON.parse(localStorage.getItem('aprobadas') || '[]');
