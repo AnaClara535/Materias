@@ -1,48 +1,76 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Malla Curricular - Contador Público UNS</title>
   <style>
     body {
-      font-family: sans-serif;
-      margin: 0;
-      background: #f8f9fa;
-      padding: 1rem;
+      font-family: Arial, sans-serif;
+      background: #f7f9fc;
+      color: #333;
+      padding: 20px;
     }
     h1 {
       text-align: center;
-      color: #3d3d3d;
     }
     .year {
-      background: #e3f2fd;
-      margin: 1rem 0;
-      border-radius: 0.5rem;
-      padding: 1rem;
+      margin: 20px 0;
+      padding: 10px;
+      background: #e0ecf8;
+      border-radius: 10px;
     }
     .cuatrimestre {
-      margin: 1rem 0;
+      margin: 10px 0;
+      padding: 10px;
+      background: #dbeeff;
+      border-radius: 8px;
     }
     .materia {
-      background: white;
-      padding: 0.5rem;
-      margin: 0.3rem 0;
-      border-radius: 0.3rem;
-      border-left: 5px solid #2196f3;
-      cursor: pointer;
-    }
-    .materia.aprobada {
-      text-decoration: line-through;
-      background: #c8e6c9;
+      margin: 5px 0;
+      padding: 8px;
+      border-radius: 5px;
+      background: #ffffff;
+      box-shadow: 0 0 4px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
     .materia.locked {
-      opacity: 0.5;
-      pointer-events: none;
+      background: #f0f0f0;
+      color: #aaa;
+    }
+    .materia.aprobada {
+      background: #c8e6c9;
+    }
+    .materia .nombre {
+      flex: 1;
+    }
+    .materia .acciones {
+      margin-left: 10px;
     }
     .tooltip {
-      font-size: 0.8rem;
-      color: #666;
+      position: relative;
+      display: inline-block;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 300px;
+      background-color: #555;
+      color: #fff;
+      text-align: left;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -150px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
     }
   </style>
 </head>
@@ -52,215 +80,138 @@
 
   <script>
     const materias = [
-      // AÑOS ANTERIORES (pueden estar definidos arriba)
-      // Agregamos Tercer Año en adelante (según pedido del usuario)
       {
-        anio: 3,
-        cuatrimestre: 1,
-        nombre: "ANALISIS DE SISTEMAS ADMINISTRATIVOS",
-        codigo: "1558",
-        cursada: ["1711"],
-        rendir: ["1711"]
+        anio: 1,
+        cuatrimestres: [
+          {
+            nombre: "Primer Cuatrimestre",
+            materias: [
+              { codigo: "1660", nombre: "INTRODUCCION A LA ADMINISTRACION" },
+              { codigo: "4757", nombre: "INTRODUCCION AL ESTUDIO DE LAS CIENCIAS SOCIALES" },
+              { codigo: "8116", nombre: "MATEMATICA I C" }
+            ]
+          },
+          {
+            nombre: "Segundo Cuatrimestre",
+            materias: [
+              { codigo: "1613", nombre: "CONTABILIDAD BASICA" },
+              { codigo: "9065", nombre: "INTRODUCCION AL DERECHO C.A." },
+              { codigo: "8117", nombre: "MATEMATICA II C", cursada: ["8116"], aprobada: ["8116"] }
+            ]
+          }
+        ]
       },
       {
-        anio: 3,
-        cuatrimestre: 1,
-        nombre: "CONTABILIDAD II C",
-        codigo: "1643",
-        cursada: ["1576"],
-        rendir: ["1576", "1613"]
-      },
-      {
-        anio: 3,
-        cuatrimestre: 1,
-        nombre: "CONTABILIDAD SOCIAL Y AMBIENTAL",
-        codigo: "1645",
-        cursada: ["1576"],
-        rendir: ["1576", "1613", "1660"]
-      },
-      {
-        anio: 3,
-        cuatrimestre: 1,
-        nombre: "FUNDAMENTOS DEL DERECHO PUBLICO",
-        codigo: "9073",
-        cursada: ["9065"],
-        rendir: ["9065"]
-      },
-      {
-        anio: 3,
-        cuatrimestre: 2,
-        nombre: "ACTUACION PROFESIONAL, LABORAL y PREVISIONAL",
-        codigo: "1670",
-        cursada: ["9074"],
-        rendir: ["9074"]
-      },
-      {
-        anio: 3,
-        cuatrimestre: 2,
-        nombre: "CONTABILIDAD III C",
-        codigo: "1644",
-        cursada: ["1643"],
-        rendir: ["1643", "1576"]
-      },
-      {
-        anio: 3,
-        cuatrimestre: 2,
-        nombre: "FINANZAS PUBLICAS C.P.",
-        codigo: "2128",
-        cursada: ["2253"],
-        rendir: ["2253"]
-      },
-      {
-        anio: 4,
-        cuatrimestre: 1,
-        nombre: "ACTUACION PROFESIONAL SOCIETARIA",
-        codigo: "1568",
-        cursada: ["9074"],
-        rendir: ["9074"]
-      },
-      {
-        anio: 4,
-        cuatrimestre: 1,
-        nombre: "ADMINISTRACION GENERAL C",
-        codigo: "1657",
-        cursada: ["1558", "1660"],
-        rendir: ["1558", "1660"]
-      },
-      {
-        anio: 4,
-        cuatrimestre: 1,
-        nombre: "CONTABILIDAD DE COSTOS",
-        codigo: "1530",
-        cursada: ["1643", "1673"],
-        rendir: ["1643", "1673", "1660"]
-      },
-      {
-        anio: 4,
-        cuatrimestre: 1,
-        nombre: "COOPERATIVAS, MUTUALES Y OTROS ENTES DE LA ECONOMIA SOCIAL",
-        codigo: "1527",
-        cursada: ["1576", "1643"],
-        rendir: ["1576", "1643", "1645", "9074"]
-      },
-      {
-        anio: 4,
-        cuatrimestre: 2,
-        nombre: "ADMINISTRACION FINANCIERA I",
-        codigo: "1511",
-        cursada: ["1643", "1644", "1673", "2128"],
-        rendir: ["1643", "1644", "1673", "2128", "8105"]
-      },
-      {
-        anio: 4,
-        cuatrimestre: 2,
-        nombre: "CONTABILIDAD PUBLICA",
-        codigo: "1532",
-        cursada: ["1643", "2128"],
-        rendir: ["1643", "2128", "9073"]
-      },
-      {
-        anio: 4,
-        cuatrimestre: 2,
-        nombre: "TEORIA Y TECNICA TRIBUTARIA I",
-        codigo: "1911",
-        cursada: ["1643", "1644"],
-        rendir: ["1643", "1644", "2128", "9073", "9074"]
-      },
-      {
-        anio: 5,
-        cuatrimestre: 0,
-        nombre: "AUDITORIA A",
-        codigo: "1666",
-        cursada: ["1568", "1657", "1911"],
-        rendir: ["1568", "1657", "1911", "1644", "1670"]
-      },
-      {
-        anio: 5,
-        cuatrimestre: 1,
-        nombre: "ACTUACION PROFESIONAL JUDICIAL",
-        codigo: "1502",
-        cursada: ["1568", "1670", "1911"],
-        rendir: ["1568", "1670", "1911"]
-      },
-      {
-        anio: 5,
-        cuatrimestre: 1,
-        nombre: "TEORIA Y TECNICA TRIBUTARIA II",
-        codigo: "1912",
-        cursada: ["1911"],
-        rendir: ["1911"]
-      },
-      {
-        anio: 5,
-        cuatrimestre: 2,
-        nombre: "PRACTICA PROFESIONAL INTEGRADORA",
-        codigo: "1812",
-        cursada: ["1568", "1912"],
-        rendir: ["1568", "1912"]
-      },
-      {
-        anio: 5,
-        cuatrimestre: 2,
-        nombre: "PRACTICA PROFESIONAL SUPERVISADA",
-        codigo: "1813",
-        rendir: ["4928"]
-      },
-      {
-        anio: 5,
-        cuatrimestre: 2,
-        nombre: "PRUEBA DE SUFICIENCIA EN IDIOMA EXTRANJERO: INGLES",
-        codigo: "4928"
+        anio: 2,
+        cuatrimestres: [
+          {
+            nombre: "Primer Cuatrimestre",
+            materias: [
+              { codigo: "1673", nombre: "ANALISIS FINANCIERO", cursada: ["8116", "8117"], aprobada: ["8116", "8117"] },
+              { codigo: "9074", nombre: "DERECHO EMPRESARIO C", cursada: ["9065"], aprobada: ["9065"] },
+              { codigo: "1711", nombre: "LABORATORIO DE TECNOLOGIA DE LA INFORMACION EN LAS ORGANIZACIONES", cursada: ["1660"], aprobada: ["1660"] },
+              { codigo: "2360", nombre: "SISTEMAS ECONOMICOS", cursada: ["8116"], aprobada: ["8116"] }
+            ]
+          },
+          {
+            nombre: "Segundo Cuatrimestre",
+            materias: [
+              { codigo: "1576", nombre: "CONTABILIDAD I C.P.", cursada: ["1613"], aprobada: ["1613"] },
+              { codigo: "8105", nombre: "ESTADISTICA CA", cursada: ["8116", "8117"], aprobada: ["8116", "8117"] },
+              { codigo: "2253", nombre: "MICROECONOMIA", cursada: ["8117", "2360"], aprobada: ["8117", "2360", "4757"] }
+            ]
+          }
+        ]
       }
     ];
 
-    const aprobadas = JSON.parse(localStorage.getItem("aprobadas") || "[]");
+    const aprobadas = JSON.parse(localStorage.getItem('materias_aprobadas') || '[]');
 
-    function puedeCursar(m) {
-      return !m.cursada || m.cursada.every(c => aprobadas.includes(c));
+    function guardarProgreso() {
+      localStorage.setItem('materias_aprobadas', JSON.stringify(aprobadas));
     }
 
-    function puedeRendir(m) {
-      return !m.rendir || m.rendir.every(r => aprobadas.includes(r));
+    function crearMateria(materia) {
+      const div = document.createElement('div');
+      div.className = 'materia';
+      const aprobada = aprobadas.includes(materia.codigo);
+      const bloqueada = (materia.cursada || materia.aprobada) && !requisitosCumplidos(materia);
+      if (bloqueada) div.classList.add('locked');
+      if (aprobada) div.classList.add('aprobada');
+
+      const nombre = document.createElement('span');
+      nombre.className = 'nombre';
+      nombre.textContent = `${materia.nombre} (${materia.codigo})`;
+
+      const acciones = document.createElement('span');
+      acciones.className = 'acciones';
+      const boton = document.createElement('button');
+      boton.textContent = aprobada ? '✓ Aprobada' : 'Marcar';
+      boton.disabled = bloqueada;
+      boton.onclick = () => {
+        if (!aprobadas.includes(materia.codigo)) {
+          aprobadas.push(materia.codigo);
+        } else {
+          const i = aprobadas.indexOf(materia.codigo);
+          aprobadas.splice(i, 1);
+        }
+        guardarProgreso();
+        renderMalla();
+      };
+      acciones.appendChild(boton);
+
+      if (bloqueada) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        tooltip.appendChild(boton);
+        const texto = document.createElement('span');
+        texto.className = 'tooltiptext';
+        texto.innerHTML = "<strong>Requisitos:</strong><br>";
+        if (materia.cursada) texto.innerHTML += `Cursada: ${materia.cursada.join(', ')}<br>`;
+        if (materia.aprobada) texto.innerHTML += `Aprobada: ${materia.aprobada.join(', ')}`;
+        tooltip.appendChild(texto);
+        acciones.appendChild(tooltip);
+      }
+
+      div.appendChild(nombre);
+      div.appendChild(acciones);
+      return div;
     }
 
-    function render() {
-      const container = document.getElementById("malla");
-      container.innerHTML = "";
-      const agrupadas = {};
-      materias.forEach(m => {
-        const key = `${m.anio}-${m.cuatrimestre}`;
-        if (!agrupadas[key]) agrupadas[key] = [];
-        agrupadas[key].push(m);
-      });
-
-      Object.entries(agrupadas).forEach(([key, lista]) => {
-        const [anio, cuatri] = key.split("-");
-        const anioEl = document.createElement("div");
-        anioEl.className = "year";
-        anioEl.innerHTML = `<h2>Año ${anio} - ${cuatri == 1 ? '1º Cuatrimestre' : cuatri == 2 ? '2º Cuatrimestre' : 'Anual'}</h2>`;
-        lista.forEach(m => {
-          const div = document.createElement("div");
-          div.className = "materia";
-          div.textContent = `${m.nombre} (${m.codigo})`;
-          if (!puedeCursar(m) || !puedeRendir(m)) div.classList.add("locked");
-          if (aprobadas.includes(m.codigo)) div.classList.add("aprobada");
-          div.onclick = () => {
-            const idx = aprobadas.indexOf(m.codigo);
-            if (idx >= 0) aprobadas.splice(idx, 1);
-            else aprobadas.push(m.codigo);
-            localStorage.setItem("aprobadas", JSON.stringify(aprobadas));
-            render();
-          };
-          const tip = document.createElement("div");
-          tip.className = "tooltip";
-          if (m.cursada) tip.innerText += `Cursar si: ${m.cursada.join(", ")}\n`;
-          if (m.rendir) tip.innerText += `Rendir si: ${m.rendir.join(", ")}\n`;
-          div.appendChild(tip);
-          anioEl.appendChild(div);
-        });
-        container.appendChild(anioEl);
-      });
+    function requisitosCumplidos(materia) {
+      const cursadaOk = !materia.cursada || materia.cursada.every(c => aprobadas.includes(c));
+      const aprobadaOk = !materia.aprobada || materia.aprobada.every(a => aprobadas.includes(a));
+      return cursadaOk && aprobadaOk;
     }
+
+    function renderMalla() {
+      const container = document.getElementById('malla');
+      container.innerHTML = '';
+      for (const año of materias) {
+        const divAño = document.createElement('div');
+        divAño.className = 'year';
+        const titulo = document.createElement('h2');
+        titulo.textContent = `Año ${año.anio}`;
+        divAño.appendChild(titulo);
+        for (const cuatri of año.cuatrimestres) {
+          const divCuatri = document.createElement('div');
+          divCuatri.className = 'cuatrimestre';
+          const subtitulo = document.createElement('h3');
+          subtitulo.textContent = cuatri.nombre;
+          divCuatri.appendChild(subtitulo);
+          for (const mat of cuatri.materias) {
+            divCuatri.appendChild(crearMateria(mat));
+          }
+          divAño.appendChild(divCuatri);
+        }
+        container.appendChild(divAño);
+      }
+    }
+
+    renderMalla();
+  </script>
+</body>
+</html>
 
     render();
   </script>
